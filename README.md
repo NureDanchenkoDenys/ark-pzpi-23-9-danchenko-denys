@@ -4,4 +4,4 @@
 
 Данченко Денис 
 
-Правила оформлення програмного коду на TypeScript
+Правила оформлення програмного коду у TypeScript за принципами Clean Code, Google та Microsoft Style Guides
