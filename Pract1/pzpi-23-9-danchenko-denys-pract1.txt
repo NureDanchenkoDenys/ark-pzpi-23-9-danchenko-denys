@@ -1,1 +1,596 @@
+Міністерство освіти і науки України
+Харківський національний університет радіоелектроніки
+Кафедра програмної інженерії
+
+
+
+
+
+Звіт
+до практичного завдання №1
+з дисципліни «Аналіз та рефакторинг коду»
+на тему: «Правила оформлення програмного коду на TypeScript»
+
+
+
+
+
+
+
+Виконав:
+ст. гр. ПЗПІ-23-9
+Данченко Денис Олександрович
+	                     Перевірив:
+                     ст. викладач кафедри ПІ
+                     Сокорчук Ігор Петрович	
+
+
+
+
+
+
+Харків 2025
+1 ІСТОРІЯ ЗМІН
+№	Дата	Версія звіту	Опис змін та виправлень
+1	30.10.2025	0.1	Початкова версія документу, заповнення всіх розділів
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+2 ЗАВДАННЯ
+Студент повинен обрати мову програмування, дослідити основні рекомендації для написання якісного коду у цій мові, продемонструвати ці рекомендації на прикладах коду, обґрунтувати кожну рекомендацію і надати детальні пояснення. Для кожного прикладу мають бути наведені фрагменти коду.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+3 ОПИС ВИКОНАНОЇ РОБОТИ
+3.1 Вступ    
+TypeScript це мова програмування, створена компанією Microsoft як розширення JavaScript, що додає статичну типізацію, класи, інтерфейси та інші можливості, притаманні строго типізованим мовам. TypeScript активно використовується у розробці веб-додатків, де важлива надійність, зрозуміла структура коду та можливість командної роботи. Мова лежить в основі популярних фреймворків, таких як Angular, React з TypeScript-підтримкою та Node.js, і є промисловим стандартом сучасної фронтенд-розробки. Завдяки суворій системі типів і вбудованим інструментам перевірки, TypeScript допомагає виявляти помилки ще на етапі компіляції, знижуючи ризик збоїв під час виконання програми. Це сприяє створенню читабельного, підтримуваного, тестованого  та ефективного коду, що відповідає принципам чистого коду.
+3.2 Рекомендація: Використовуйте інтерфейси чи типи для опису структур даних
+Опис: Описуючи форми об’єктів через інтерфейси чи типи, ви створюєте «контракт», який допомагає при читанні коду, перевірці типів, валідації та рефакторингу. Це робить код передбачуваним і безпечним.
+Приклад:
+1	// Гарний приклад
+2	interface User {
+3	id: number;
+4	name: string;
+5	}
+6	
+7	function greet(user: User) {
+8	console.log(`Hello, ${user.name}`);
+9	}
+10	
+11	// Поганий приклад
+12	function greet(user: any) {
+13	console.log(`Hello, ${user.name}`);
+14	}
+
+
+3.3 Рекомендація: Уникайте дублювання коду
+Опис: Повторення однакових фрагментів коду ускладнює його підтримку. Якщо в майбутньому потрібно буде внести зміни доведеться оновлювати кожен блок вручну. Щоб цього уникнути, варто винести спільну логіку в універсальні функції, класи або модулі. 
+Приклад:
+1	// Поганий приклад 
+2	function calculateAreaRectangle(width: number, height: number):
+3	number {
+4	return width * height;
+5	}
+6	
+7	function calculateAreaCircle(radius: number): number {
+8	return Math.PI * radius * radius;
+9	}
+10	
+11	function calculateAreaSquare(side: number): number {
+12	return side * side;
+13	}
+14	// — код повторює схожі дії та важче підтримується
+15	
+16	// Гарний приклад 
+17	type Shape =
+18	| { type: "rectangle"; width: number; height: number }
+19	| { type: "circle"; radius: number }
+20	| { type: "square"; side: number };
+21	
+22	function calculateArea(shape: Shape): number {
+23	switch (shape.type) {
+24	case "rectangle":
+25	return shape.width * shape.height;
+26	case "circle":
+27	return Math.PI * shape.radius ** 2;
+28	case "square":
+29	return shape.side ** 2;
+30	default:
+31	throw new Error("Unknown shape type");
+32	}
+33	}
+
+3.4 Рекомендація: Дотримуйтесь конвенцій іменування, чіткість та послідовність
+Опис: Єдина система іменування це фундамент чистого коду. Назви змінних, функцій, класів та констант мають бути зрозумілими, послідовними й узгодженими з контекстом проекту. Дотримання стандартних шаблонів допомагає уникати плутанини та полегшує спільну розробку.
+camelCase — для змінних, функцій та аргументів;
+PascalCase — для класів, інтерфейсів і типів;
+UPPER_SNAKE_CASE — для констант.
+Приклад:
+1	// Поганий приклад
+2	let A = "John";
+3	const calc = (x, y) => x + y;
+4	class person {
+5	constructor(public n: string) {}
+6	}
+7	interface iuser {
+8	id: number;
+9	}
+10	
+11	// Гарний приклад
+12	let userName = "John";
+13	const calculateSum = (x: number, y: number) => x + y;
+14	
+15	class Person {
+16	constructor(public name: string) {}
+17	}
+18	
+19	interface IUser {
+20	id: number;
+21	}
+22	
+23	const MAX_ATTEMPTS = 3;
+
+3.5 Рекомендація: Типи та типізація. Створення безпечного коду
+Опис: TypeScript це надбудова над JavaScript, що додає статичну типізацію, завдяки якій більшість помилок можна виявити ще до запуску програми. Типи роблять код передбачуваним, і безпечним.
+Типізація дозволяє:
+уникати помилок при передачі некоректних параметрів;
+спрощувати супровід і рефакторинг коду;
+покращувати розуміння логіки програми іншими розробниками.
+Завжди:
+вказуйте типи параметрів функцій;
+задавайте типи змінним із неочевидним значенням;
+визначайте тип результату функції.
+Приклад:
+1	// Поганий приклад
+2	function getTotal(price, tax) {
+3	return price + tax;
+4	}
+5	
+6	let user;
+7	user = "John";
+8	user = 123; // змінюється тип без перевірки
+9	
+10	// Гарний приклад
+11	function getTotal(price: number, tax: number): number {
+12	return price + tax;
+13	}
+14	
+15	let user: string = "John";
+16	// user = 123; // помилка компіляції
+17	
+18	// Також можна створювати власні типи
+19	type UserRole = "admin" | "manager" | "client";
+20	let role: UserRole = "admin";
+
+3.6 Рекомендація: Використовуйте зрозумілі назви
+Опис: Назви змінних, функцій, класів та файлів мають чітко відображати їхню роль і робити код зрозумілим без додаткових коментарів. Уникайте коротких і беззмістовних позначень типу x, temp, data, які не несуть семантичного навантаження. Добре підібрані назви значно полегшують рефакторинг, тестування.
+Приклад:
+1	// Поганий приклад
+2	function d(a: number, b: number): number {
+3	return a * b;
+4	}
+5	
+6	const arr = [1, 2, 3];
+7	const t = new Date();
+8	
+9	// складно зрозуміти, що робить функція і змінні
+10	
+11	// Гарний приклад
+12	function calculateRectangleArea(width: number, height: number): number {
+13	return width * height;
+14	}
+15	
+16	const userIds = [1, 2, 3];
+17	const creationDate = new Date();
+
+3.7 Рекомендація: Розбивай код на зрозумілі блоки
+Опис: Кожна функція повинна виконувати одне конкретне завдання  це підвищує читабельність, тестованість і спрощує рефакторинг. Якщо функція одночасно виконує валідацію, обробку, логування й запис у базу вона стає важкою для розуміння та тестування. Дотримуйся принципу «одна функція - одна відповідальність».
+Приклад:
+1	// Гарний приклад
+2	function processUserData(user: User) {
+3	const isValid = validateUser(user);
+4	if (!isValid) throw new Error("Invalid user data");
+5	
+6	saveUserToDatabase(user);
+7	sendWelcomeEmail(user.email);
+8	}
+9	
+10	function validateUser(user: User): boolean {
+11	return Boolean(user.name && user.email);
+12	}
+13	
+14	function saveUserToDatabase(user: User) {
+15	console.log(`User ${user.name} saved to DB`);
+16	}
+17	
+18	function sendWelcomeEmail(email: string) {
+19	console.log(`Welcome email sent to ${email}`);
+20	}
+21	
+22	// Поганий приклад
+23	function processUserData(user: any) {
+24	if (!user.name || !user.email) {
+25	throw new Error("Invalid user data");
+26	}
+27	console.log(`User ${user.name} saved to DB`);
+28	console.log(`Welcome email sent to ${user.email}`);
+29	}
+
+3.8 Рекомендація: Уникай надмірного проектування.
+Опис: Надмірне проектування виникає, коли розробник створює зайво складні структури для простих завдань, наприклад, додає фабрики, абстракції або патерни там, де достатньо простої функції. Такі рішення ускладнюють розуміння, тестування та зміну коду. Дотримуйся принципу KISS (Keep It Simple, Stupid) реалізуй мінімум, який дійсно необхідний для вирішення задачі.
+Приклад:
+            // Гарний приклад
+1	class User {
+2	constructor(public name: string) {}
+3	}
+4	
+5	const user = new User("Denys");
+6	console.log(user.name);
+7	
+8	// Поганий приклад
+9	class UserFactory {
+10	static createUser(name: string) {
+11	return new User(name);
+12	}
+13	}
+14	
+15	const user = UserFactory.createUser("Denys");
+16	console.log(user.name);
+
+3.9 Рекомендація: Будь послідовним 
+Опис: Послідовність це одна з найважливіших ознак чистого та професійного коду. Використовуй однакові патерни, стиль і підхід у всьому проекті для назв змінних, форматування, обробки помилок, структури папок і файлів. Якщо частини коду написані у різних стилях, це створює плутанину, ускладнює рефакторинг і роботу в команді. Обери єдиний стиль і дотримуйся його скрізь.
+Приклад:
+1	// Гарний приклад (послідовний стиль)
+2	function getUserData(id: number): User {
+3	try {
+4	const user = fetchUserById(id);
+5	return user;
+6	} catch (error) {
+7	console.error("Error fetching user:", error);
+8	throw error;
+9	}
+10	}
+11	
+12	// Поганий приклад (різні стилі, непослідовність)
+13	function get_user(id) { // інший стиль іменування
+14	try {
+15	let u = FetchUser(id); // інша назва функції
+16	return u;
+17	} catch (e) {
+18	console.log("Fetch fail", e); 
+19	}
+20	}
+3.10 Рекомендація: Використовуй ефективні структури даних
+Опис: Вибір правильної структури даних безпосередньо впливає на продуктивність, зрозумілість і масштабованість коду. Якщо потрібно часто виконувати пошук або доступ до елементів за ключем, краще використовувати Map або Set замість масивів.
+Приклад:
+            // Гарний приклад
+1	const users = new Map([
+2	[1, { id: 1, name: "Alice" }],
+3	[2, { id: 2, name: "Bob" }],
+4	]);
+5	
+6	function getUserById(id: number) {
+7	return users.get(id);
+8	}
+9	
+10	console.log(getUserById(2)); // { id: 2, name: 'Bob' }
+11	
+12	// Поганий приклад
+13	const usersArray = [
+14	{ id: 1, name: "Alice" },
+15	{ id: 2, name: "Bob" },
+16	];
+17	
+18	function getUserByIdWrong(id: number) {
+19	return usersArray.find((user) => user.id === id);
+20	}
+
+3.11 Рекомендація: Тестування
+Опис: Тестування це не додаткова робота, а невід’ємна частина процесу розробки. Тести гарантують, що код працює відповідно до очікувань і дозволяють вносити зміни без страху щось зламати.
+Регулярне тестування допомагає:
+виявляти помилки ще до розгортання;
+зберігати стабільність системи;
+прискорювати розробку в довгостроковій перспективі.
+Навіть прості функції варто покривати тестами, особливо якщо вони часто змінюються або містять критичну логіку.
+
+
+Приклади:
+1	// Гарний приклад
+2	// Функція для обчислення знижки
+3	function calculateDiscount(price: number, discount: number): number {
+4	if (discount > price) throw new Error("Discount cannot exceed price");
+5	return price - discount;
+6	}
+7	
+8	// Тест (наприклад, з використанням Jest)
+9	test("calculateDiscount correctly calculates discount", () => {
+10	expect(calculateDiscount(100, 20)).toBe(80);
+11	expect(() => calculateDiscount(100, 200)).toThrow("Discount cannot exceed price");
+12	});
+13	
+14	// Поганий приклад
+15	// Функція без тестів — будь-яка зміна може зламати логіку
+16	function calculateDiscount(price: number, discount: number): number {
+17	return price - discount; // не перевіряє крайові випадки
+18	}
+
+3.12 Рекомендація: Використовуй умовні типи 
+Опис: Умовні типи це інструмент TypeScript, який дозволяє створювати гнучкі та розумні типи, що змінюються залежно від умов. Вони працюють подібно до операторів if, else, але на рівні системи типів, що робить їх незамінними для побудови універсальних типових утиліт.
+Conditional types допомагають:
+описувати складні залежності між типами;
+уникати дублювання кодових структур;
+покращувати безпечність та узгодженість типізації.
+Приклади:
+         // Гарний приклад
+         // Умовний тип, який визначає тип значення, що повертається з функції
+1	type MyReturnType<T> = T extends (...args: any[]) => infer R ? R : any;
+2	
+3	type Result1 = MyReturnType<() => string>; // string
+4	type Result2 = MyReturnType<() => void>;   // void
+5	
+6	// Поганий приклад
+7	// Без умовного типу довелося б дублювати код або вручну вказувати типи
+8	type ManualStringReturn = string;
+9	type ManualVoidReturn = void;
+
+
+3.13 Рекомендація: Використовуй узагальнені типи 
+Опис: Узагальнені типи дозволяють створювати універсальні та багаторазові компоненти, які можуть працювати з різними типами даних, не втрачаючи типову безпеку.
+Замість того щоб писати кілька версій однієї функції або класу для різних типів, можна використати параметри типів, які роблять код гнучким і масштабованим.
+Вони допомагають уникати дублювання коду й водночас зберігають сувору типізацію, запобігаючи помилкам ще на етапі компіляції.
+Приклади:
+            // Гарний приклад
+1	function createArray<T>(length: number, value: T): Array<T> {
+2	const result: T[] = [];
+3	for (let i = 0; i < length; i++) {
+4	result[i] = value;
+5	}
+6	return result;
+7	}
+8	
+9	let names = createArray<string>(3, "Bob");   
+10	let numbers = createArray<number>(3, 0);     
+11	
+12	// Поганий приклад
+13	// Без generics довелося б створювати дублікати функцій
+14	function createStringArray(length: number, value: string): string[] 
+15	{
+16	return Array(length).fill(value);
+17	}
+18	
+19	function createNumberArray(length: number, value: number): number[] 
+20	{
+21	return Array(length).fill(value);
+22	}
+
+
+3.14 Рекомендація: Використовуй простори імен 
+Опис: Простори імен допомагають структурувати код і уникати конфліктів імен у великих проектах. Вони створюють логічний контейнер для змінних, класів, функцій та інтерфейсів, обмежуючи їхню область видимості в межах одного модуля. Це особливо зручно, коли потрібно згрупувати логічно пов’язаний функціонал. Завдяки цьому код стає більш організованим, а ризик колізій між назвами елементів мінімізується.
+Приклад:
+1	// Гарний приклад
+2	namespace OrderModule {
+3	export class Order {
+4	constructor(public id: number, public customer: string) {}
+5	}
+6	
+7	export function cancelOrder(order: Order) {
+8	console.log(`Order ${order.id} cancelled.`);
+9	}
+10	
+11	export function processOrder(order: Order) {
+12	console.log(`Order ${order.id} processed for ${order.customer}.`);
+13	}
+14	}
+15	
+16	let order = new OrderModule.Order(1, "Denys");
+17	OrderModule.processOrder(order);
+18	OrderModule.cancelOrder(order);
+19	
+20	// Поганий приклад
+21	// Усі елементи у глобальній області — можливі конфлікти назв
+22	class Order {
+23	constructor(public id: number, public customer: string) {}
+24	}
+25	
+26	function cancelOrder(order: Order) {
+27	console.log(`Order ${order.id} cancelled.`);
+28	}
+29	
+30	function processOrder(order: Order) {
+31	console.log(`Order ${order.id} processed.`);
+32	}
+33	
+34	let order2 = new Order(2, "Gosha");
+35	processOrder(order2);
+36	cancelOrder(order2);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4 ВИСНОВКИ
+У ході виконання роботи було проаналізовано основні принципи написання якісного, зрозумілого та підтримуваного коду мовою TypeScript. Ця мова, надає розробникам інструменти типізації, модульності та перевірки коду ще на етапі компіляції, що значно знижує кількість помилок під час виконання програм. Було розглянуто низку практичних рекомендацій, які забезпечують чистоту, узгодженість і безпечність коду, зокрема: використання інтерфейсів та типів для опису структур даних, уникнення дублювання коду, дотримання конвенцій іменування, створення атомарних функцій, застосування узагальнених і умовних типів, ефективних структур даних, а також тестування та використання просторів імен. Дотримання цих принципів дозволяє не лише покращити якість програмного продукту, але й підвищити зручність командної розробки, зменшити технічну заборгованість і спростити подальший рефакторинг. TypeScript завдяки своїй строгій типізації, гнучким можливостям та інтеграції з сучасними фреймворками залишається одним із найкращих інструментів для створення масштабованих і надійних веб-додатків.
+
+
+
+
+
+
+
+
+
+
+
+
+
+5 ВИКОРИСТАНІ ДЖЕРЕЛА
+1. VD M. Interfaces vs Types in TypeScript: The Definitive Guide for Modern Developers. Medium. URL: https://medium.com/devglyph/interfaces-vs-types-in-typescript-the-definitive-guide-for-modern-developers-abbaad1a0d36 (дата звернення: 30.10.2025).
+2. Handbook - Interfaces. TypeScript: JavaScript With Syntax For Types. URL: https://www.typescriptlang.org/docs/handbook/interfaces.html (дата звернення: 30.10.2025).
+3. Huseynli A. TypeScript Naming Conventions: Crafting Maintainable Code. Medium.URL: https://aykhanhuseyn.medium.com/typescript-naming-conventions-crafting-maintainable-code-7d872234fe17  (дата звернення: 30.10.2025).
+4. Documentation - Everyday Types. TypeScript: JavaScript With Syntax For Types. URL: https://www.typescriptlang.org/docs/handbook/2/everyday-types.html (дата звернення: 30.10.2025).
+5. Alam S. Understanding Data Structures in TypeScript: A Practical Guide with Real-World Examples. Medium. URL: https://medium.com/@sehban.alam/understanding-data-structures-in-typescript-a-practical-guide-with-real-world-examples-07b4a92a5a93 (дата звернення: 30.10.2025).
+6. Documentation - Conditional Types. TypeScript: JavaScript With Syntax For Types. URL: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html (дата звернення: 30.10.2025).
+7. Documentation - Namespaces. TypeScript: JavaScript With Syntax For Types. URL: https://www.typescriptlang.org/docs/handbook/namespaces.html (дата звернення: 30.10.2025).
+
+
+
+ДОДАТОК А
+Відеозапис: https://youtu.be/yawY80-7GJQ
+Таймкоди до відеозапису:
+00:00 - Тема доповіді 
+00:09 - Вступ 
+00:37 - Використовуйте інтерфейси чи типи для опису структур даних    
+01:09 - Уникайте дублювання коду 
+01:42 - Дотримуйтесь конвенцій іменування 
+02:41 - Типи та типізація. Створення безпечного коду 
+03:23 - Використовуйте зрозумілі назви 
+04:04 - Розбивай код на зрозумілі блоки 
+04:41 - Уникай надмірного проектування 
+05:22 - Будь послідовним 
+06:05 - Використовуй ефективні структури даних 
+06:38 - Тестування 
+07:21 - Використовуй умовні типи 
+08:16 - Використовуй узагальнені типи 
+08:59 - Використовуй простори імен 
+09:41 - Висновок
+
+
+
+
+
+
+
+
+
+
+ДОДАТОК Б
+ 
+Рисунок Б.1 — Титульна сторінка
+
+ 
+Рисунок Б.2 — Вступ
+
+
+
+ 
+Рисунок Б.3 — Використовуйте інтерфейси чи типи для опису структур даних
+
+ 
+Рисунок Б.4 — Уникайте дублювання коду
+
+
+
+ 
+Рисунок Б.5 — Дотримуйтесь конвенцій іменування
+
+ 
+Рисунок Б.6 — Типи та типізація. Створення безпечного коду
+
+ 
+Рисунок Б.7 — Використовуйте зрозумілі назви
+
+ 
+Рисунок Б.8 — Розбивай код на зрозумілі блоки
+
+
+
+
+ 
+Рисунок Б.9 — Уникай надмірного проектування
+
+ 
+Рисунок Б.10 — Будь послідовним
+
+ 
+Рисунок Б.11 — Використовуй ефективні структури даних
+
+ 
+Рисунок Б.12 — Тестування
+
+ 
+Рисунок Б.13 — Використовуй умовні типи
+
+ 
+Рисунок Б.14 — Використовуй узагальнені типи
+
+ 
+Рисунок Б.15 — Використовуй простори імен
+
+ 
+Рисунок Б.16 — Висновок
+
+
+
+
+ДОДАТОК В
+Програмний код
+GitHub репозиторій: https://github.com/NureDanchenkoDenys/ark-pzpi-23-9-danchenko-denys/blob/main/Pract1/pzpi-23-9-danchenko-denys-pract1/code-examples-code-conventions.ts
+
+
+
+
 
